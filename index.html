@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>લગ્ન કંકોત્રી</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rasa:wght@400;500;600;700&family=Noto+Serif+Gujarati:wght@400;600;700&family=Mukta+Vaani:wght@300;400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== SPLASH: Lord Ganesha (first interface) ===== -->
+<section id="splash">
+  <canvas id="splash-canvas"></canvas>
+  <div id="ganesha-embed" hidden>
+    <iframe title="Ganesha 3D" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen
+      src="https://sketchfab.com/models/a93a83413e034b29803aed62577357c5/embed?autostart=1&autospin=0.3&preload=1&transparent=1&ui_theme=dark&dnt=1&camera=0"></iframe>
+  </div>
+  <div class="toran" aria-hidden="true"></div>
+  <div class="splash-content">
+    <p class="mantra">॥ श्री गणेशाय नमः ॥</p>
+    <h1 class="splash-title">શુભ વિવાહ</h1>
+    <p class="splash-sub" id="splash-sub"></p>
+    <p class="guest" id="guest" hidden><span class="guest-label">પ્રતિ,</span> <span class="guest-name" id="guest-name"></span></p>
+    <button id="open-btn" class="btn-gold"><span>કંકોત્રી ખોલો</span></button>
+  </div>  
+</section>
+
+<!-- ===== MANDAP DOORS (transition) ===== -->
+<div id="doors" aria-hidden="true">
+  <div class="door left"><div class="door-inner"><div class="door-motif"></div></div></div>
+  <div class="door right"><div class="door-inner"><div class="door-motif"></div></div></div>
+</div>
+
+<!-- ===== MAIN INVITATION ===== -->
+<main id="invite" aria-hidden="true">
+  <canvas id="bg-canvas"></canvas>
+
+  <header class="hero">
+    <div class="toran" aria-hidden="true"></div>
+    <p class="reveal mantra small">॥ श्री गणेशाय नमः ॥</p>
+    <div class="deities reveal" id="deities"></div>
+    <p class="reveal small-caps">॥ શુભ લગ્ન કંકોત્રી ॥</p>
+    <p class="reveal invite-intro">પરમ કૃપાળુ પરમાત્માની અસીમ કૃપા તથા વડીલોના આશીર્વાદથી</p>
+    <p class="reveal parents" id="groom-parents"></p>
+    <p class="reveal origin" id="groom-from"></p>
+    <h2 class="names" id="names">
+      <span class="name reveal"><small class="hon">ચિ.</small> <span data-name="groom">વરરાજા</span></span>
+      <span class="amp reveal">ના શુભલગ્ન</span>
+      <span class="name reveal"><small class="hon">ચિ.</small> <span data-name="bride">કન્યા</span></span>
+    </h2>
+    <p class="reveal parents" id="bride-parents"></p>
+    <p class="reveal origin" id="bride-from"></p>
+    <p class="reveal invite-line">સાથે નક્કી થયેલ છે. આ માંગલિક પ્રસંગે આપ સૌ સ્નેહીજનો સહકુટુંબ પધારી નવદંપતીને આશીર્વાદ આપશો એવી નમ્ર વિનંતી.</p>
+    <p class="reveal date-line" id="date-line"></p>
+    <p class="reveal tithi-line" id="tithi-line"></p>
+    <p class="reveal tithi-line" id="muhurat-line"></p>
+    <div class="countdown reveal" id="countdown">
+      <div><b data-cd="d">૦૦</b><span>દિવસ</span></div>
+      <div><b data-cd="h">૦૦</b><span>કલાક</span></div>
+      <div><b data-cd="m">૦૦</b><span>મિનિટ</span></div>
+      <div><b data-cd="s">૦૦</b><span>સેકન્ડ</span></div>
+    </div>
+  </header>
+
+  <section class="section blessing">
+    <h3 class="section-title reveal">શુભાશિષ</h3>
+    <div class="verse-card reveal">
+      <p class="verse" id="verse"></p>
+      <p class="inviter" id="inviter"></p>
+    </div>
+  </section>
+
+  <section class="section events">
+    <h3 class="section-title reveal">માંગલિક પ્રસંગો</h3>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <section class="section venue">
+    <h3 class="section-title reveal" id="venue-title">શુભ સ્થળ</h3>
+    <div class="venue-card reveal">
+      <p class="venue-name" id="venue-name">Venue Name</p>
+      <p class="venue-addr" id="venue-addr">Street, City, State</p>
+      <a class="btn-gold" id="map-link" href="#" target="_blank" rel="noopener"><span>રસ્તો બતાવો</span></a>
+    </div>
+  </section>
+
+  <section class="section rsvp">
+    <h3 class="section-title reveal">આપની ઉપસ્થિતિ</h3>
+    <p class="reveal">આપની ઉપસ્થિતિ જ અમારા માટે સૌથી મોટો આશીર્વાદ છે. કૃપા કરી આપ પધારી શકશો કે કેમ તે અમને જણાવવા વિનંતી.</p>
+    <div class="rsvp-actions reveal">
+      <a class="btn-gold" id="wa-link" href="#" target="_blank" rel="noopener"><span>વોટ્સએપ પર જણાવો</span></a>
+      <a class="btn-outline" id="cal-link" href="#" download="wedding.ics"><span>કેલેન્ડરમાં નોંધો</span></a>
+    </div>
+  </section>
+
+  <footer>
+    <p class="mantra small">॥ शुभम् भवतु ॥</p>
+    <p class="foot-names" id="foot-names"></p>
+    <p class="foot-note">લિ. આપના આશીર્વાદાભિલાષી</p>
+    <p class="foot-family" id="foot-family"></p>
+    <p class="foot-note small">દર્શનાભિલાષી: સમસ્ત સ્નેહી-સ્વજનો</p>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
