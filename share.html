@@ -20,6 +20,12 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
 .seg{display:flex;border:1px solid rgba(212,175,55,.5);border-radius:999px;padding:3px}
 .seg button{flex:1;border:0;background:transparent;color:var(--gold-2);font:inherit;font-weight:600;padding:.55rem;border-radius:999px;cursor:pointer}
 .seg button.active{background:linear-gradient(135deg,#f6e3a1,#d4af37 60%,#b8901f);color:var(--ink)}
+.namewrap{position:relative}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:5;background:#2a0a16;border:1px solid rgba(212,175,55,.6);border-radius:12px;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.sugg button{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--cream);font-family:'Noto Serif Gujarati',serif;font-size:1.1rem;padding:.6rem 1rem;cursor:pointer}
+.sugg button:hover,.sugg button.hot{background:rgba(212,175,55,.2);color:var(--gold-2)}
+.sugg button small{opacity:.5;font-family:'Mukta Vaani',sans-serif;font-size:.75rem;margin-left:.5rem}
+.hint{font-size:.78rem;opacity:.65;margin-top:.4rem}
 .preview{margin-top:1.2rem;padding:1rem;border-radius:14px;background:rgba(0,0,0,.25);border:1px dashed rgba(212,175,55,.45);text-align:center}
 .preview .line{font-family:'Noto Serif Gujarati',serif;font-size:1.25rem;color:var(--cream)}
 .preview .line b{color:var(--gold-2)}
@@ -40,7 +46,11 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
   <p class="sub">મહેમાનનું નામ લખો, લિંક તૈયાર થઈ જશે</p>
 
   <label for="name">મહેમાનનું નામ</label>
-  <input type="text" id="name" placeholder="દા.ત. આનંદી રાઠોડ  /  પટેલ પરિવાર" autocomplete="off" autofocus>
+  <div class="namewrap">
+    <input type="text" id="name" placeholder="anandi rathod  →  આનંદી રાઠોડ" autocomplete="off" autofocus>
+    <div class="sugg" id="sugg" hidden></div>
+  </div>
+  <p class="hint">અંગ્રેજીમાં લખો (anandi) → ગુજરાતી સૂચનો આવશે; space દબાવતાં પહેલું સૂચન લાગુ થશે.</p>
 
   <label>કોની તરફથી કંકોત્રી?</label>
   <div class="seg" id="side">
@@ -93,7 +103,56 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
     const msg = `${shown ? shown + ',\n\n' : ''}${who} ના શુભલગ્ન પ્રસંગે આપને હૃદયપૂર્વક નિમંત્રણ.\nકંકોત્રી અહીં જુઓ 👇\n${link}`;
     waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
   }
-  nameEl.addEventListener('input', update);
+  // ---- live English → Gujarati transliteration (Google Input Tools) ----
+  const sugg = document.getElementById('sugg');
+  let suggWords = [], hot = 0, reqId = 0;
+  const cache = {};
+  function currentWord() {
+    const v = nameEl.value, pos = nameEl.selectionStart;
+    const start = v.lastIndexOf(' ', pos - 1) + 1;
+    let end = v.indexOf(' ', pos); if (end < 0) end = v.length;
+    return { word: v.slice(start, end), start, end };
+  }
+  async function fetchSugg(word) {
+    if (cache[word]) return cache[word];
+    const r = await fetch('https://inputtools.google.com/request?text=' + encodeURIComponent(word) + '&itc=gu-t-i0-und&num=5&cp=0&cs=1&ie=utf-8&oe=utf-8');
+    const d = await r.json();
+    const list = (d[0] === 'SUCCESS' && d[1][0] && d[1][0][1]) || [];
+    cache[word] = list; return list;
+  }
+  function hideSugg() { sugg.hidden = true; suggWords = []; }
+  function showSugg(list, typed) {
+    suggWords = list; hot = 0;
+    if (!list.length) return hideSugg();
+    sugg.innerHTML = list.map((w, i) => `<button type="button" data-i="${i}" class="${i === 0 ? 'hot' : ''}">${w}<small>${typed}</small></button>`).join('');
+    sugg.hidden = false;
+  }
+  function applyWord(w) {
+    const { start, end } = currentWord();
+    const v = nameEl.value;
+    nameEl.value = v.slice(0, start) + w + v.slice(end);
+    const p = start + w.length; nameEl.setSelectionRange(p, p);
+    hideSugg(); update();
+  }
+  async function maybeSuggest() {
+    const { word } = currentWord();
+    if (!/^[A-Za-z]+$/.test(word)) return hideSugg();
+    const id = ++reqId;
+    try { const list = await fetchSugg(word); if (id === reqId) showSugg(list, word); } catch (e) { hideSugg(); }
+  }
+  sugg.addEventListener('mousedown', e => { const b = e.target.closest('button'); if (b) { e.preventDefault(); applyWord(suggWords[+b.dataset.i]); } });
+  nameEl.addEventListener('keydown', e => {
+    if (sugg.hidden || !suggWords.length) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault(); hot = (hot + (e.key === 'ArrowDown' ? 1 : suggWords.length - 1)) % suggWords.length;
+      sugg.querySelectorAll('button').forEach((b, i) => b.classList.toggle('hot', i === hot));
+    } else if (e.key === ' ' || e.key === 'Enter' || e.key === 'Tab') {
+      e.preventDefault(); applyWord(suggWords[hot]);
+      if (e.key === ' ') { const p = nameEl.selectionStart; nameEl.value = nameEl.value.slice(0, p) + ' ' + nameEl.value.slice(p); nameEl.setSelectionRange(p + 1, p + 1); update(); }
+    } else if (e.key === 'Escape') hideSugg();
+  });
+  nameEl.addEventListener('blur', () => setTimeout(hideSugg, 150));
+  nameEl.addEventListener('input', () => { update(); maybeSuggest(); });
   document.querySelectorAll('#side button').forEach(b => b.addEventListener('click', () => {
     side = b.dataset.side;
     document.querySelectorAll('#side button').forEach(x => x.classList.toggle('active', x === b));
