@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>કંકોત્રી લિંક બનાવો</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;600;700&family=Mukta+Vaani:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#d4af37;--gold-2:#f3d98b;--cream:#fbf3e4;--ink:#2a1a12}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Mukta Vaani',system-ui,sans-serif;color:var(--cream);min-height:100vh;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(ellipse at 50% 20%,#6b1030 0%,#3b0a1a 50%,#12060c 100%)}
+.card{width:100%;max-width:520px;padding:28px 26px;border-radius:24px;border:1px solid rgba(212,175,55,.5);background:rgba(255,255,255,.05);backdrop-filter:blur(8px);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+h1{font-family:'Noto Serif Gujarati',serif;font-weight:700;color:var(--gold-2);font-size:1.7rem;text-align:center;margin-bottom:.3rem}
+.sub{text-align:center;opacity:.8;font-size:.95rem;margin-bottom:1.4rem}
+label{display:block;font-weight:600;color:var(--gold-2);margin:1rem 0 .4rem;font-size:.95rem}
+input[type=text]{width:100%;padding:.85rem 1rem;border-radius:12px;border:1px solid rgba(212,175,55,.5);background:rgba(0,0,0,.25);color:var(--cream);font:inherit;font-size:1.1rem;font-family:'Noto Serif Gujarati',serif}
+input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.2)}
+.seg{display:flex;border:1px solid rgba(212,175,55,.5);border-radius:999px;padding:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--gold-2);font:inherit;font-weight:600;padding:.55rem;border-radius:999px;cursor:pointer}
+.seg button.active{background:linear-gradient(135deg,#f6e3a1,#d4af37 60%,#b8901f);color:var(--ink)}
+.preview{margin-top:1.2rem;padding:1rem;border-radius:14px;background:rgba(0,0,0,.25);border:1px dashed rgba(212,175,55,.45);text-align:center}
+.preview .line{font-family:'Noto Serif Gujarati',serif;font-size:1.25rem;color:var(--cream)}
+.preview .line b{color:var(--gold-2)}
+.preview .url{font-size:.75rem;opacity:.6;word-break:break-all;margin-top:.5rem}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1.1rem}
+.btn{display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.9rem;border-radius:999px;border:0;font:inherit;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}
+.btn-gold{background:linear-gradient(135deg,#f6e3a1,#d4af37 60%,#b8901f);color:var(--ink)}
+.btn-wa{background:#25d366;color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:var(--gold-2);grid-column:1/-1}
+.tip{font-size:.8rem;opacity:.65;margin-top:1rem;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#1f5a24;color:#fff;padding:.6rem 1.2rem;border-radius:999px;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>કંકોત્રી લિંક બનાવો</h1>
+  <p class="sub">મહેમાનનું નામ લખો, લિંક તૈયાર થઈ જશે</p>
+
+  <label for="name">મહેમાનનું નામ</label>
+  <input type="text" id="name" placeholder="દા.ત. આનંદી રાઠોડ  /  પટેલ પરિવાર" autocomplete="off" autofocus>
+
+  <label>કોની તરફથી કંકોત્રી?</label>
+  <div class="seg" id="side">
+    <button type="button" data-side="groom" class="active">વર પક્ષ (હાર્દિક)</button>
+    <button type="button" data-side="bride">કન્યા પક્ષ (અંજના)</button>
+  </div>
+
+  <div class="preview">
+    <div class="line" id="line">પ્રતિ, <b>…</b></div>
+    <div class="url" id="url"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-gold" id="copy">🔗 લિંક કૉપી કરો</button>
+    <a class="btn btn-wa" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
+    <a class="btn btn-outline" id="open" href="#" target="_blank" rel="noopener">👁 કંકોત્રી જુઓ</a>
+  </div>
+  <p class="tip">ટિપ: ફોન પર ગુજરાતી કીબોર્ડ (Gboard → ગુજરાતી) થી નામ લખો. શ્રી/શ્રીમતી અને "તથા સર્વો" આપોઆપ ઉમેરાશે.</p>
+</div>
+<div class="toast" id="toast">લિંક કૉપી થઈ ગઈ ✓</div>
+
+<script src="js/config.js"></script>
+<script>
+(function () {
+  const W = window.WEDDING;
+  const base = location.href.replace(/share\.html.*$/, '');
+  const nameEl = document.getElementById('name'), lineEl = document.getElementById('line'), urlEl = document.getElementById('url');
+  const copyBtn = document.getElementById('copy'), waBtn = document.getElementById('wa'), openBtn = document.getElementById('open'), toast = document.getElementById('toast');
+  let side = 'groom', link = base;
+
+  function displayName(raw) {
+    const name = raw.replace(/\s+/g, ' ').trim();
+    if (!name) return '';
+    const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(name);
+    const prefix = (!hasTitle && W.guestPrefix) ? W.guestPrefix + ' ' : '';
+    const suffix = W.guestSuffix ? ' ' + W.guestSuffix : '';
+    return prefix + name + suffix;
+  }
+  function update() {
+    const raw = nameEl.value.replace(/\s+/g, ' ').trim();
+    const u = new URL(base);
+    if (side === 'bride') u.searchParams.set('side', 'bride');
+    if (raw) u.searchParams.set('to', raw);
+    link = u.toString();
+    const shown = displayName(raw);
+    lineEl.innerHTML = 'પ્રતિ, <b>' + (shown || '…') + '</b>';
+    urlEl.textContent = decodeURIComponent(link);
+    openBtn.href = link;
+    const who = side === 'bride' ? `${W.bride} અને ${W.groom}` : `${W.groom} અને ${W.bride}`;
+    const msg = `${shown ? shown + ',\n\n' : ''}${who} ના શુભલગ્ન પ્રસંગે આપને હૃદયપૂર્વક નિમંત્રણ.\nકંકોત્રી અહીં જુઓ 👇\n${link}`;
+    waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  }
+  nameEl.addEventListener('input', update);
+  document.querySelectorAll('#side button').forEach(b => b.addEventListener('click', () => {
+    side = b.dataset.side;
+    document.querySelectorAll('#side button').forEach(x => x.classList.toggle('active', x === b));
+    update();
+  }));
+  copyBtn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(link); }
+    catch (e) { const t = document.createElement('textarea'); t.value = link; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+    toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1800);
+  });
+  update();
+})();
+</script>
+</body>
+</html>

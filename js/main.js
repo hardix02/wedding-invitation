@@ -493,7 +493,8 @@
   // Guest name from the link: index.html?to=શ્રી પટેલ પરિવાર   (falls back to config, else hidden)
   (function () {
     const q = new URLSearchParams(location.search).get('to');
-    const name = (q && q.trim()) || W.guestDefault || '';
+    // allow _ or + instead of spaces so links are easy to type:  ?to=anandi_rathod
+    const name = (q && q.replace(/[_+]/g, ' ').replace(/\s+/g, ' ').trim()) || W.guestDefault || '';
     if (!name) return;
     const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(name);
     const prefix = (!hasTitle && W.guestPrefix) ? W.guestPrefix + ' ' : '';
