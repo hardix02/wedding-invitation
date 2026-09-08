@@ -6,8 +6,8 @@ window.WEDDING = {
   // Per-guest: share the link as  index.html?to=શ્રી પટેલ પરિવાર
   // guestDefault is shown when the link has no ?to= (leave "" to hide the line).
   guestDefault: "",
-  guestPrefix: "",   // respectful title before every guest name (skipped if the name already starts with શ્રી)
-  guestSuffix: "",           // e.g. "તથા પરિવાર" appended after every guest name
+  guestPrefix: "શ્રી/શ્રીમતી",   // respectful title before every guest name (skipped if the name already starts with શ્રી)
+  guestSuffix: "સર્વો",           // appended after every guest name
   groom: "હાર્દિક",
   bride: "અંજના",
   groomParents: "શ્રી ખીમજીભાઈ તથા શ્રીમતી રેખાબેન બારૈયા ના સુપુત્ર",
@@ -64,11 +64,11 @@ window.WEDDING = {
     whatsapp: "919999999999",                          // TODO: bride-side RSVP number
     events: [                                          // TODO: confirm bride-side programme
       { name: "ગણેશ સ્થાપન", date: "તા. ૧૧ ડિસેમ્બર ૨૦૨૬, શુક્રવાર", time: "સવારે ૯:૦૦ કલાકે", icon: "om", note: "શુભ કાર્યની મંગલ શરૂઆત" },
-      { name: "પીઠી", date: "તા. ૧૨ ડિસેમ્બર ૨૦૨૬, શનિવાર", time: "સવારે ૯:૦૦ કલાકે", icon: "flower", note: "પીળા વસ્ત્રોમાં પધારવા વિનંતી" },
-      { name: "મંડપ મુહૂર્ત", date: "તા. ૧૨ ડિસેમ્બર ૨૦૨૬, શનિવાર", time: "સવારે ૧૧:૦૦ કલાકે", icon: "mandap", note: "મંડપ રોપણ વિધિ" },
       { name: "મહેંદી", date: "તા. ૧૨ ડિસેમ્બર ૨૦૨૬, શનિવાર", time: "સાંજે ૪:૦૦ કલાકે", icon: "flower", note: "મહેંદીની રંગત" },
+      { name: "પીઠી", date: "તા. ૧૨ ડિસેમ્બર ૨૦૨૬, શનિવાર", time: "સાંજે ૯:૦૦ કલાકે", icon: "flower", note: "પીળા વસ્ત્રોમાં પધારવા વિનંતી" },
+      { name: "મંડપ મુહૂર્ત", date: "તા. ૧૨ ડિસેમ્બર ૨૦૨૬, શનિવાર", time: "સવારે ૯:૦૦ કલાકે", icon: "mandap", note: "મંડપ રોપણ વિધિ" },      
       { name: "જાન સ્વાગત", date: "તા. ૧૩ ડિસેમ્બર ૨૦૨૬, રવિવાર", time: "સાંજે ૬:૦૦ કલાકે", icon: "dhol", note: "વરરાજાની જાનનું સ્વાગત" },
-      { name: "હસ્તમેળાપ", date: "તા. ૧૩ ડિસેમ્બર ૨૦૨૬, રવિવાર", time: "રાત્રે ૭:૦૦ કલાકે", icon: "rings", note: "લગ્નવિધિ, સપ્તપદી અને આશીર્વાદ" }
+      { name: "હસ્તમેળાપ", date: "તા. ૧૩ ડિસેમ્બર ૨૦૨૬, રવિવાર", time: "બપોરે ૧૨:૦૦ કલાકે", icon: "rings", note: "લગ્નવિધિ, સપ્તપદી અને આશીર્વાદ" }
     ]
   },
 
