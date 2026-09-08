@@ -498,7 +498,7 @@
     const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(name);
     const prefix = (!hasTitle && W.guestPrefix) ? W.guestPrefix + ' ' : '';
     const suffix = W.guestSuffix ? ' ' + W.guestSuffix : '';
-    document.getElementById('guest-name').textContent = name;
+    document.getElementById('guest-name').textContent = prefix + name + suffix;
     document.getElementById('guest').hidden = false;
   })();
   document.getElementById('deities').innerHTML = (W.deities || []).map(d => `<span>${d}</span>`).join('');
