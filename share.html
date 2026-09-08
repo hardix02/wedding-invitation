@@ -52,6 +52,19 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
   </div>
   <p class="hint">અંગ્રેજીમાં લખો (anandi) → ગુજરાતી સૂચનો આવશે; space દબાવતાં પહેલું સૂચન લાગુ થશે.</p>
 
+  <label>સંબોધન</label>
+  <div class="seg" id="prefix">
+    <button type="button" data-p="શ્રી">શ્રી</button>
+    <button type="button" data-p="શ્રીમતી">શ્રીમતી</button>
+    <button type="button" data-p="શ્રી/શ્રીમતી" class="active">શ્રી/શ્રીમતી</button>
+  </div>
+
+  <label>કોને?</label>
+  <div class="seg" id="scope">
+    <button type="button" data-all="0">એક વ્યક્તિ</button>
+    <button type="button" data-all="1" class="active">સહપરિવાર (તથા સર્વો)</button>
+  </div>
+
   <label>કોની તરફથી કંકોત્રી?</label>
   <div class="seg" id="side">
     <button type="button" data-side="groom" class="active">વર પક્ષ (હાર્દિક)</button>
@@ -68,7 +81,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
     <a class="btn btn-wa" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
     <a class="btn btn-outline" id="open" href="#" target="_blank" rel="noopener">👁 કંકોત્રી જુઓ</a>
   </div>
-  <p class="tip">ટિપ: ફોન પર ગુજરાતી કીબોર્ડ (Gboard → ગુજરાતી) થી નામ લખો. શ્રી/શ્રીમતી અને "તથા સર્વો" આપોઆપ ઉમેરાશે.</p>
+  <p class="tip">ટિપ: "એક વ્યક્તિ" પસંદ કરો તો ફક્ત નામ આવશે; "સહપરિવાર" પસંદ કરો તો નામ પછી "તથા સર્વો" ઉમેરાશે.</p>
 </div>
 <div class="toast" id="toast">લિંક કૉપી થઈ ગઈ ✓</div>
 
@@ -79,21 +92,25 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
   const base = location.href.replace(/share\.html.*$/, '');
   const nameEl = document.getElementById('name'), lineEl = document.getElementById('line'), urlEl = document.getElementById('url');
   const copyBtn = document.getElementById('copy'), waBtn = document.getElementById('wa'), openBtn = document.getElementById('open'), toast = document.getElementById('toast');
-  let side = 'groom', link = base;
+  let side = 'groom', link = base, prefix = 'શ્રી/શ્રીમતી', all = '1';
 
   function displayName(raw) {
     const name = raw.replace(/\s+/g, ' ').trim();
     if (!name) return '';
     const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(name);
-    const prefix = (!hasTitle && W.guestPrefix) ? W.guestPrefix + ' ' : '';
-    const suffix = W.guestSuffix ? ' ' + W.guestSuffix : '';
-    return prefix + name + suffix;
+    const pre = hasTitle ? '' : prefix + ' ';
+    const suffix = (all === '1' && W.guestSuffix) ? ' ' + W.guestSuffix : '';
+    return pre + name + suffix;
   }
   function update() {
     const raw = nameEl.value.replace(/\s+/g, ' ').trim();
     const u = new URL(base);
     if (side === 'bride') u.searchParams.set('side', 'bride');
-    if (raw) u.searchParams.set('to', raw);
+    if (raw) {
+      const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(raw);
+      u.searchParams.set('to', hasTitle ? raw : prefix + ' ' + raw);   // title travels inside the name
+      u.searchParams.set('all', all);
+    }
     link = u.toString();
     const shown = displayName(raw);
     lineEl.innerHTML = 'પ્રતિ, <b>' + (shown || '…') + '</b>';
@@ -151,6 +168,12 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
       if (e.key === ' ') { const p = nameEl.selectionStart; nameEl.value = nameEl.value.slice(0, p) + ' ' + nameEl.value.slice(p); nameEl.setSelectionRange(p + 1, p + 1); update(); }
     } else if (e.key === 'Escape') hideSugg();
   });
+  document.querySelectorAll('#prefix button').forEach(b => b.addEventListener('click', () => {
+    prefix = b.dataset.p; document.querySelectorAll('#prefix button').forEach(x => x.classList.toggle('active', x === b)); update();
+  }));
+  document.querySelectorAll('#scope button').forEach(b => b.addEventListener('click', () => {
+    all = b.dataset.all; document.querySelectorAll('#scope button').forEach(x => x.classList.toggle('active', x === b)); update();
+  }));
   nameEl.addEventListener('blur', () => setTimeout(hideSugg, 150));
   nameEl.addEventListener('input', () => { update(); maybeSuggest(); });
   document.querySelectorAll('#side button').forEach(b => b.addEventListener('click', () => {

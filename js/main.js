@@ -498,7 +498,9 @@
     if (!name) return;
     const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(name);
     const prefix = (!hasTitle && W.guestPrefix) ? W.guestPrefix + ' ' : '';
-    const suffix = W.guestSuffix ? ' ' + W.guestSuffix : '';
+    const allParam = new URLSearchParams(location.search).get('all');   // 1 = family (add suffix), 0 = single person
+    const wantSuffix = allParam === null ? true : allParam !== '0';
+    const suffix = (wantSuffix && W.guestSuffix) ? ' ' + W.guestSuffix : '';
     document.getElementById('guest-name').textContent = prefix + name + suffix;
     document.getElementById('guest').hidden = false;
   })();
