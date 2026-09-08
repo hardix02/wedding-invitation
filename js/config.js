@@ -7,7 +7,7 @@ window.WEDDING = {
   // guestDefault is shown when the link has no ?to= (leave "" to hide the line).
   guestDefault: "",
   guestPrefix: "શ્રી/શ્રીમતી",   // respectful title before every guest name (skipped if the name already starts with શ્રી)
-  guestSuffix: "સર્વો",           // appended after every guest name
+  guestSuffix: "તથા સર્વો",           // appended after every guest name
   groom: "હાર્દિક",
   bride: "અંજના",
   groomParents: "શ્રી ખીમજીભાઈ તથા શ્રીમતી રેખાબેન બારૈયા ના સુપુત્ર",
