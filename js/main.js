@@ -1,7 +1,9 @@
 /* Wedding invitation — 3D splash + animated invite */
 (function () {
   // ---- which side of the family is inviting?  index.html?side=bride  (default: groom) ----
-  const SIDE = /^(bride|kanya)$/i.test(new URLSearchParams(location.search).get('side') || '') ? 'bride' : 'groom';
+  const QS = new URLSearchParams(location.search);
+  const CODE = (window.InviteCode && QS.get('i')) ? window.InviteCode.decode(QS.get('i')) : null;   // short link ?i=
+  const SIDE = CODE ? CODE.side : (/^(bride|kanya)$/i.test(QS.get('side') || '') ? 'bride' : 'groom');
   const W = Object.assign({}, window.WEDDING, SIDE === 'bride' ? (window.WEDDING.bride_side || {}) : {});
   W.side = SIDE;
   document.documentElement.dataset.side = SIDE;
@@ -492,14 +494,14 @@
   document.querySelectorAll('[data-name="bride"]').forEach(e => e.textContent = W.bride);
   // Guest name from the link: index.html?to=શ્રી પટેલ પરિવાર   (falls back to config, else hidden)
   (function () {
-    const q = new URLSearchParams(location.search).get('to');
+    const q = CODE ? CODE.name : new URLSearchParams(location.search).get('to');
     // allow _ or + instead of spaces so links are easy to type:  ?to=anandi_rathod
     const name = (q && q.replace(/[_+]/g, ' ').replace(/\s+/g, ' ').trim()) || W.guestDefault || '';
     if (!name) return;
     const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(name);
     const prefix = (!hasTitle && W.guestPrefix) ? W.guestPrefix + ' ' : '';
     const allParam = new URLSearchParams(location.search).get('all');   // 1 = family (add suffix), 0 = single person
-    const wantSuffix = allParam === null ? true : allParam !== '0';
+    const wantSuffix = CODE ? CODE.all : (allParam === null ? true : allParam !== '0');
     const suffix = (wantSuffix && W.guestSuffix) ? ' ' + W.guestSuffix : '';
     document.getElementById('guest-name').textContent = prefix + name + suffix;
     document.getElementById('guest').hidden = false;

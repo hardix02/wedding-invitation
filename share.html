@@ -85,6 +85,7 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
 </div>
 <div class="toast" id="toast">લિંક કૉપી થઈ ગઈ ✓</div>
 
+<script src="js/invite-code.js"></script>
 <script src="js/config.js"></script>
 <script>
 (function () {
@@ -104,17 +105,13 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
   }
   function update() {
     const raw = nameEl.value.replace(/\s+/g, ' ').trim();
-    const u = new URL(base);
-    if (side === 'bride') u.searchParams.set('side', 'bride');
-    if (raw) {
-      const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(raw);
-      u.searchParams.set('to', hasTitle ? raw : prefix + ' ' + raw);   // title travels inside the name
-      u.searchParams.set('all', all);
-    }
-    link = u.toString();
+    const hasTitle = /^(શ્રી|શ્રીમતી|પૂજ્ય|માનનીય|આદરણીય|ડૉ\.|સૌ\.)/.test(raw);
+    const fullName = raw ? (hasTitle ? raw : prefix + ' ' + raw) : '';
+    const code = window.InviteCode.encode({ name: fullName, side, all: all === '1' });
+    link = (raw || side === 'bride') ? base + '?i=' + code : base;
     const shown = displayName(raw);
     lineEl.innerHTML = 'પ્રતિ, <b>' + (shown || '…') + '</b>';
-    urlEl.textContent = decodeURIComponent(link);
+    urlEl.textContent = link;
     openBtn.href = link;
     const who = side === 'bride' ? `${W.bride} અને ${W.groom}` : `${W.groom} અને ${W.bride}`;
     const msg = `${shown ? shown + ',\n\n' : ''}${who} ના શુભલગ્ન પ્રસંગે આપને હૃદયપૂર્વક નિમંત્રણ.\nકંકોત્રી અહીં જુઓ 👇\n${link}`;
