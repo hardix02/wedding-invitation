@@ -1,0 +1,148 @@
+/* cache 1760968200 */
+/* Printable kankotri — screen preview + PDF/print */
+:root{
+  --maroon:#5c0a24;
+  --maroon-deep:#3b0a1a;
+  --gold:#b8922a;
+  --gold-2:#8a6a12;
+  --cream:#fbf3e4;
+  --cream-2:#f3e6cf;
+  --ink:#2a1a12;
+  --line:rgba(184,146,42,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#2a0a16;color:var(--ink);font-family:'Mukta Vaani',system-ui,sans-serif}
+body{min-height:100vh;padding:24px 16px 48px}
+
+.toolbar{
+  position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;align-items:center;
+  max-width:820px;margin:0 auto 18px;padding:12px 14px;border-radius:16px;
+  background:rgba(20,6,12,.92);border:1px solid rgba(212,175,55,.45);backdrop-filter:blur(8px);
+  color:var(--cream);
+}
+.toolbar .hint{flex:1 1 100%;text-align:center;font-size:.85rem;opacity:.75}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.35rem;
+  padding:.7rem 1.15rem;border-radius:999px;border:0;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;
+}
+.btn-gold{background:linear-gradient(135deg,#f6e3a1,#d4af37 60%,#b8901f);color:var(--ink)}
+.btn-outline{background:transparent;border:1px solid var(--gold);color:#f3d98b}
+
+.sheet{
+  width:210mm;max-width:100%;min-height:auto;margin:0 auto 20px;padding:12mm 11mm;
+  background:var(--cream);color:var(--ink);
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  border:1px solid rgba(212,175,55,.35);
+  position:relative;
+}
+.sheet::before{
+  content:"";position:absolute;inset:5mm;border:1.5px solid var(--line);pointer-events:none;
+}
+.inner{position:relative;z-index:1;text-align:center}
+
+.mantra{font-family:'Tiro Devanagari Sanskrit','Noto Serif Gujarati',serif;color:var(--gold-2);letter-spacing:.08em;font-size:.95rem}
+.deities{display:flex;flex-wrap:wrap;justify-content:center;gap:.35rem .9rem;margin:.45rem 0 .15rem;font-family:'Noto Serif Gujarati',serif;font-size:.9rem;color:var(--maroon)}
+.kankotri{font-family:'Noto Serif Gujarati',serif;letter-spacing:.16em;font-size:.85rem;color:var(--gold-2);margin:.4rem 0 .7rem}
+.guest{font-family:'Noto Serif Gujarati',serif;font-size:1.05rem;margin:.3rem 0 .8rem;color:var(--maroon)}
+.guest b{color:var(--ink)}
+.intro,.invite-line,.parents,.origin,.tithi{font-family:'Noto Serif Gujarati',serif;line-height:1.6}
+.intro{font-size:.95rem;margin-bottom:.3rem}
+.parents{font-size:.92rem;color:var(--maroon);margin-top:.12rem}
+.origin{font-size:.82rem;opacity:.8}
+.names{margin:.45rem 0 .2rem}
+.names .name{display:block;font-family:'Noto Serif Gujarati',serif;font-weight:700;font-size:clamp(1.65rem,4.2vw,2.25rem);color:var(--maroon-deep);line-height:1.3}
+.names .hon{font-size:.45em;color:var(--gold-2);margin-right:.2em}
+.amp-line{margin:.2rem 0 .35rem}
+.amp{display:block;font-family:'Noto Serif Gujarati',serif;font-size:1rem;color:var(--gold-2)}
+.invite-line{font-size:.92rem;max-width:150mm;margin:.25rem auto .55rem;line-height:1.65}
+.date-line{font-family:'Noto Serif Gujarati',serif;font-weight:700;font-size:1.18rem;color:var(--maroon);margin-top:.45rem;letter-spacing:.03em}
+.tithi{font-size:.88rem;opacity:.85;margin-top:.12rem}
+
+.rule{width:70px;height:1px;margin:.85rem auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+.section-h{font-family:'Noto Serif Gujarati',serif;font-weight:700;font-size:1.28rem;color:var(--maroon);margin:.7rem 0 .45rem}
+.verse{font-family:'Noto Serif Gujarati',serif;font-size:.95rem;line-height:1.85;max-width:148mm;margin:0 auto}
+.inviter{font-family:'Noto Serif Gujarati',serif;font-weight:700;color:var(--gold-2);margin-top:.55rem;font-size:.98rem}
+
+.venue{margin-top:.55rem;padding:.65rem 1rem;border:1px solid var(--line);border-radius:12px;display:inline-block;min-width:55%;background:rgba(255,255,255,.35)}
+.venue-name{font-family:'Noto Serif Gujarati',serif;font-weight:700;font-size:1.08rem;color:var(--maroon)}
+.venue-addr{font-family:'Noto Serif Gujarati',serif;font-size:.92rem;margin-top:.2rem;line-height:1.5}
+
+.foot{margin-top:1rem;font-family:'Noto Serif Gujarati',serif;font-size:.86rem;opacity:.85}
+.foot .pair{font-weight:700;color:var(--maroon);font-size:1.12rem;margin:.2rem 0;opacity:1}
+/* no forced page breaks — content flows; browser splits pages naturally */
+.page-break{break-after:auto;page-break-after:auto}
+
+/* ===== Programme (માંગલિક પ્રસંગો) — high visibility ===== */
+.programme-title{font-size:1.55rem;margin:.35rem 0 .15rem;letter-spacing:.04em}
+.programme-title::after{content:"";display:block;width:90px;height:2px;margin:.35rem auto 0;background:linear-gradient(90deg,transparent,var(--gold),var(--maroon),var(--gold),transparent)}
+.programme-sub{font-family:'Noto Serif Gujarati',serif;font-size:.88rem;color:var(--gold-2);margin-bottom:.9rem;letter-spacing:.08em}
+.events{
+  margin:0 auto;max-width:168mm;text-align:left;
+  display:flex;flex-direction:column;gap:.42rem;
+}
+.ev{
+  display:grid;
+  grid-template-columns:36px 1fr;
+  gap:.15rem .75rem;
+  align-items:start;
+  padding:.55rem .75rem .55rem .6rem;
+  border:1px solid var(--line);
+  border-left:4px solid var(--maroon);
+  border-radius:10px;
+  background:linear-gradient(90deg,rgba(92,10,36,.06),rgba(255,255,255,.55) 40%,rgba(255,255,255,.35));
+  font-family:'Noto Serif Gujarati',serif;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.ev-num{
+  grid-row:1 / span 3;
+  width:30px;height:30px;margin-top:.1rem;
+  border-radius:50%;
+  display:grid;place-items:center;
+  font-weight:700;font-size:.95rem;
+  color:var(--cream);background:var(--maroon);
+  border:1px solid var(--gold);
+}
+.ev-name{font-weight:700;font-size:1.02rem;color:var(--maroon-deep);line-height:1.35;grid-column:2}
+.ev-when{grid-column:2;font-size:.9rem;color:var(--ink);opacity:.9;margin-top:.1rem}
+.ev-when b{color:var(--maroon);font-weight:700}
+.ev-note{grid-column:2;font-size:.82rem;color:var(--gold-2);margin-top:.12rem;font-style:normal}
+
+.well{margin-top:.85rem}
+.well-top{margin-top:0}
+.well-top .well-title:first-child{margin-top:.2rem}
+.well-title{font-family:'Noto Serif Gujarati',serif;font-weight:700;font-size:1.18rem;color:var(--maroon);margin:.9rem 0 .4rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:.25rem 1.1rem;text-align:center;max-width:170mm;margin:0 auto}
+.cols ul{list-style:none;font-family:'Noto Serif Gujarati',serif;font-size:.8rem;line-height:1.65}
+
+@media (max-width:820px){
+  .sheet{padding:10mm 7mm;min-height:auto}
+  .ev{grid-template-columns:30px 1fr}
+}
+
+@page{size:A4;margin:8mm}
+@media print{
+  html,body{background:#fff;padding:0}
+  .toolbar{display:none!important}
+  .sheet{
+    width:auto;max-width:none;min-height:auto;margin:0;padding:2mm;
+    box-shadow:none;border:0;background:var(--cream);
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .sheet::before{inset:2mm}
+  /* no forced page breaks — content flows; browser splits pages naturally */
+.page-break{break-after:auto;page-break-after:auto}
+  .ev{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  a{color:inherit;text-decoration:none}
+}
+
+
+/* Keep programme cards intact; never force blank pages between sections */
+.ev{break-inside:avoid;page-break-inside:avoid}
+.well{break-inside:auto}
+.well-title{break-after:avoid;page-break-after:avoid}
+.after-names{break-inside:avoid;page-break-inside:avoid}
+@media print{
+  .sheet{min-height:0!important;height:auto!important}
+  .page-break{break-after:auto!important;page-break-after:auto!important}
+}

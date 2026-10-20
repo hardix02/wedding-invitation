@@ -80,19 +80,20 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
     <button class="btn btn-gold" id="copy">🔗 લિંક કૉપી કરો</button>
     <a class="btn btn-wa" id="wa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
     <a class="btn btn-outline" id="open" href="#" target="_blank" rel="noopener">👁 કંકોત્રી જુઓ</a>
+    <a class="btn btn-outline" id="pdf" href="print.html" target="_blank" rel="noopener">📄 PDF ડાઉનલોડ / પ્રિન્ટ</a>
   </div>
   <p class="tip">ટિપ: "એક વ્યક્તિ" પસંદ કરો તો ફક્ત નામ આવશે; "સહપરિવાર" પસંદ કરો તો નામ પછી "તથા સર્વો" ઉમેરાશે.</p>
 </div>
 <div class="toast" id="toast">લિંક કૉપી થઈ ગઈ ✓</div>
 
-<script src="js/invite-code.js?v=1788857517"></script>
-<script src="js/config.js?v=1788857517"></script>
+<script src="js/invite-code.js?v=1760965200"></script>
+<script src="js/config.js?v=1760965200"></script>
 <script>
 (function () {
   const W = window.WEDDING;
   const base = location.href.replace(/share\.html.*$/, '');
   const nameEl = document.getElementById('name'), lineEl = document.getElementById('line'), urlEl = document.getElementById('url');
-  const copyBtn = document.getElementById('copy'), waBtn = document.getElementById('wa'), openBtn = document.getElementById('open'), toast = document.getElementById('toast');
+  const copyBtn = document.getElementById('copy'), waBtn = document.getElementById('wa'), openBtn = document.getElementById('open'), pdfBtn = document.getElementById('pdf'), toast = document.getElementById('toast');
   let side = 'groom', link = base, prefix = 'શ્રી/શ્રીમતી', all = '1';
 
   function displayName(raw) {
@@ -113,6 +114,10 @@ input[type=text]:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3p
     lineEl.innerHTML = 'પ્રતિ, <b>' + (shown || '…') + '</b>';
     urlEl.textContent = link;
     openBtn.href = link;
+    if (pdfBtn) {
+      const q = link.includes('?') ? link.slice(link.indexOf('?')) : '';
+      pdfBtn.href = 'print.html' + q;
+    }
     const who = side === 'bride' ? `${W.bride} અને ${W.groom}` : `${W.groom} અને ${W.bride}`;
     const msg = `${shown ? shown + ',\n\n' : ''}${who} ના શુભલગ્ન પ્રસંગે આપને હૃદયપૂર્વક નિમંત્રણ.\nકંકોત્રી અહીં જુઓ 👇\n${link}`;
     waBtn.href = 'https://wa.me/?text=' + encodeURIComponent(msg);

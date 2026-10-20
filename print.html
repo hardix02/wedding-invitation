@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>કંકોત્રી PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Gujarati:wght@400;600;700&family=Mukta+Vaani:wght@400;500;600&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/print.css?v=1760968800">
+</head>
+<body>
+
+<div class="toolbar">
+  <button type="button" class="btn btn-gold" id="print-btn">📄 PDF સેવ કરો / પ્રિન્ટ</button>
+  <a class="btn btn-outline" href="share.html">← લિંક બનાવો</a>
+  <a class="btn btn-outline" id="web-link" href="index.html">વેબ કંકોત્રી</a>
+  <p class="hint">ડાયલોગમાં Destination / Printer તરીકે <b>Save as PDF</b> / <b>Microsoft Print to PDF</b> પસંદ કરો.</p>
+</div>
+
+<!-- One continuous sheet — browser paginates naturally (no forced blank pages) -->
+<article class="sheet">
+  <div class="inner">
+    <p class="mantra">॥ श्री गणेशाय नमः ॥</p>
+    <div class="deities" id="deities"></div>
+    <p class="kankotri">॥ શુભ લગ્ન કંકોત્રી ॥</p>
+
+    <p class="guest" id="guest" hidden>પ્રતિ, <b id="guest-name"></b></p>
+
+    <p class="intro">પરમ કૃપાળુ પરમાત્માની અસીમ કૃપા તથા વડીલોના આશીર્વાદથી</p>
+
+    <div id="name-stack">
+      <div id="groom-block">
+        <p class="parents" id="groom-parents"></p>
+        <p class="origin" id="groom-from"></p>
+        <div class="names">
+          <span class="name"><small class="hon">ચિ.</small><span data-name="groom">વરરાજા</span></span>
+        </div>
+      </div>
+      <p class="amp-line" id="amp-line"><span class="amp">ના શુભલગ્ન</span></p>
+      <div id="bride-block">
+        <div class="names">
+          <span class="name"><small class="hon">ચિ.</small><span data-name="bride">કન્યા</span></span>
+        </div>
+        <p class="parents" id="bride-parents"></p>
+        <p class="origin" id="bride-from"></p>
+      </div>
+    </div>
+
+    <p class="invite-line">સાથે નક્કી થયેલ છે. આ માંગલિક પ્રસંગે આપ સೌ સ્નેહીજનો સહકુટુંબ પધારી નવદંપતીને આશીર્વાદ આપશો એવી નમ્ર વિનંતી.</p>
+
+    <p class="date-line" id="date-line"></p>
+    <p class="tithi" id="tithi-line"></p>
+    <p class="tithi" id="muhurat-line"></p>
+
+    <div class="rule"></div>
+    <h3 class="section-h programme-title">માંગલિક પ્રસંગો</h3>
+    <p class="programme-sub">પ્રસંગ અનુસાર</p>
+    <div class="events" id="events"></div>
+
+    <div id="wellwishers-page" class="well">
+      <div class="rule"></div>
+      <h3 class="well-title">દર્શનાભિલાષી</h3>
+      <div class="cols">
+        <ul id="darshan-left"></ul>
+        <ul id="darshan-right"></ul>
+      </div>
+      <h3 class="well-title">સ્નેહાધીન</h3>
+      <div class="cols">
+        <ul id="sneha-left"></ul>
+        <ul id="sneha-right"></ul>
+      </div>
+    </div>
+
+    <div class="after-names">
+      <div class="rule"></div>
+      <h3 class="section-h">શુભાશિષ</h3>
+      <p class="verse" id="verse"></p>
+      <p class="inviter" id="inviter"></p>
+
+      <div class="rule"></div>
+      <h3 class="section-h" id="venue-title">શુભ સ્થળ</h3>
+      <div class="venue">
+        <p class="venue-name" id="venue-name"></p>
+        <p class="venue-addr" id="venue-addr"></p>
+      </div>
+
+      <div class="foot">
+        <p>લિ. આપના આશીર્વાદાભિલાષી</p>
+        <p class="pair" id="foot-names"></p>
+        <p id="foot-family"></p>
+      </div>
+    </div>
+  </div>
+</article>
+
+<script src="js/invite-code.js?v=1760968800"></script>
+<script src="js/config.js?v=1760968800"></script>
+<script src="js/print.js?v=1760968800"></script>
+<script>
+  (function () {
+    var a = document.getElementById('web-link');
+    if (a) a.href = 'index.html' + location.search;
+  })();
+</script>
+</body>
+</html>
