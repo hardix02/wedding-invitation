@@ -96,6 +96,10 @@ window.WEDDING = {
   // ===== BRIDE SIDE (કન્યા પક્ષ) =====
   // Opened with  index.html?side=bride   — anything here overrides the groom-side value above.
   bride_side: {
+    // Clear groom-family well-wisher lists on bride-side invites
+    darshanabhilashi: [],
+    snehadhin: [],
+    snehadhinYoung: [],
     deities: ["॥ શ્રી ચામુંડા માતાજી ॥", "॥ શ્રી ખોડિયાર માતાજી ॥", "॥ શ્રી મેલડી માતાજી ॥"],   // TODO: bride's kuldevi
     splashQuote: "શ્રી ગણેશજી તથા અમારા કુળદેવીની કૃપાથી અમારા આંગણે લગ્નનો માંગલિક પ્રસંગ આવ્યો છે.<br>આ શુભ અવસરે આપ સૌને પધારવા હૃદયપૂર્વક નિમંત્રણ.",
     inviter: "નિમંત્રક: રાઠોડ પરિવાર, સિહોર",      // TODO: bride's village / town

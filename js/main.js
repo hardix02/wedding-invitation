@@ -531,9 +531,9 @@
     fillNames(rightId, names.slice(mid));
   };
   const wellwishersEl = document.querySelector('.wellwishers');
-  // Groom-side Baraiya family lists; hide on bride-side invite
-  if (SIDE === 'bride' || !(W.darshanabhilashi || []).length) {
-    if (wellwishersEl) wellwishersEl.hidden = true;
+  // Groom-side only — never show Baraiya well-wisher lists on bride invites
+  if (SIDE !== 'groom' || !(W.darshanabhilashi || []).length) {
+    if (wellwishersEl) wellwishersEl.remove();
   } else {
     fillTwoCols('darshanabhilashi-left', 'darshanabhilashi-right', W.darshanabhilashi);
     fillTwoCols('snehadhin-left', 'snehadhin-right',
