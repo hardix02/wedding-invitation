@@ -514,10 +514,31 @@
   document.getElementById('groom-from').textContent = W.groomFrom ? `(${W.groomFrom})` : '';
   document.getElementById('bride-from').textContent = W.brideFrom ? `(${W.brideFrom})` : '';
   document.getElementById('muhurat-line').textContent = W.muhurat || '';
-  document.getElementById('foot-family').textContent = SIDE === 'bride' ? `${W.brideFamily}  ·  ${W.groomFamily}` : `${W.groomFamily}  ·  ${W.brideFamily}`;
+  document.getElementById('foot-family').textContent = SIDE === 'bride' ? `${W.brideFamily}` : `${W.groomFamily}`;
   document.getElementById('date-line').textContent = W.dateText;
   document.getElementById('verse').innerHTML = (W.verse || []).map(l => `<span>${l}</span>`).join('<br>');
   document.getElementById('inviter').textContent = W.inviter || '';
+  const fillNames = (id, list) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = (list || []).map(n => `<li>${n}</li>`).join('');
+  };
+  // Split a name list into two near-equal columns (left gets the extra if odd)
+  const fillTwoCols = (leftId, rightId, list) => {
+    const names = list || [];
+    const mid = Math.ceil(names.length / 2);
+    fillNames(leftId, names.slice(0, mid));
+    fillNames(rightId, names.slice(mid));
+  };
+  const wellwishersEl = document.querySelector('.wellwishers');
+  // Groom-side Baraiya family lists; hide on bride-side invite
+  if (SIDE === 'bride' || !(W.darshanabhilashi || []).length) {
+    if (wellwishersEl) wellwishersEl.hidden = true;
+  } else {
+    fillTwoCols('darshanabhilashi-left', 'darshanabhilashi-right', W.darshanabhilashi);
+    fillTwoCols('snehadhin-left', 'snehadhin-right',
+      [...(W.snehadhin || []), ...(W.snehadhinYoung || [])]);
+  }
   document.getElementById('venue-title').textContent = W.venueTitle || 'લગ્ન સ્થળ';
   document.getElementById('venue-name').textContent = W.venue.name;
   document.getElementById('venue-addr').textContent = W.venue.address;
