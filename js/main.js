@@ -8,16 +8,26 @@
   W.side = SIDE;
   document.documentElement.dataset.side = SIDE;
   const isMobile = matchMedia('(max-width: 640px)').matches;
-  const DPR = Math.min(devicePixelRatio || 1, 3);
+  // Low-end / slow-network: keep splash usable on cheap phones
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const slowNet = !!(conn && (conn.saveData || /2g|3g/i.test(conn.effectiveType || '')));
+  const lowMem = (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  const lowEnd = isMobile || slowNet || lowMem || matchMedia('(max-width: 900px) and (pointer: coarse)').matches;
+  const DPR = Math.min(devicePixelRatio || 1, lowEnd ? 1.25 : 2);
 
   /* ================= helpers ================= */
   function makeRenderer(canvas) {
-    const r = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    const r = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !lowEnd, powerPreference: lowEnd ? 'low-power' : 'high-performance' });
     r.setPixelRatio(DPR);
     r.setSize(innerWidth, innerHeight, false);
     r.outputEncoding = THREE.sRGBEncoding;
-    r.toneMapping = THREE.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.1;
+    if (lowEnd) {
+      r.toneMapping = THREE.NoToneMapping;
+    } else {
+      r.toneMapping = THREE.ACESFilmicToneMapping;
+      r.toneMappingExposure = 1.1;
+    }
     return r;
   }
   function circleTexture() {
@@ -236,22 +246,23 @@
 
   // halo ring behind deity
   const halo = new THREE.Mesh(
-    new THREE.RingGeometry(1.55, 1.75, 96),
+    new THREE.RingGeometry(1.55, 1.75, lowEnd ? 48 : 96),
     new THREE.MeshBasicMaterial({ color: 0xf3d98b, transparent: true, opacity: .55, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
   );
   halo.position.set(0, LOOK_Y, -0.8); sScene.add(halo);
   const halo2 = new THREE.Mesh(
-    new THREE.RingGeometry(1.9, 1.93, 96),
+    new THREE.RingGeometry(1.9, 1.93, lowEnd ? 48 : 96),
     new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: .35, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
   );
   halo2.position.copy(halo.position); sScene.add(halo2);
 
-  // rotating light rays behind the deity
+  // rotating light rays behind the deity (skipped on low-end — 1024px canvas is costly)
   function raysTexture() {
-    const S = 1024, c = document.createElement('canvas'); c.width = c.height = S;
+    const S = lowEnd ? 256 : 1024, c = document.createElement('canvas'); c.width = c.height = S;
     const g = c.getContext('2d'); g.translate(S / 2, S / 2);
-    for (let i = 0; i < 36; i++) {
-      const a = i / 36 * Math.PI * 2, w = 0.035 + (i % 2) * 0.02;
+    const n = lowEnd ? 16 : 36;
+    for (let i = 0; i < n; i++) {
+      const a = i / n * Math.PI * 2, w = 0.035 + (i % 2) * 0.02;
       const grad = g.createLinearGradient(0, 0, Math.cos(a) * S / 2, Math.sin(a) * S / 2);
       grad.addColorStop(0, 'rgba(255,225,150,0.9)'); grad.addColorStop(1, 'rgba(255,200,90,0)');
       g.fillStyle = grad; g.beginPath(); g.moveTo(0, 0);
@@ -259,18 +270,24 @@
     }
     return new THREE.CanvasTexture(c);
   }
-  const rays = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: raysTexture(), transparent: true, opacity: .32, depthWrite: false, blending: THREE.AdditiveBlending }));
-  rays.position.set(0, LOOK_Y, -1.2); sScene.add(rays);
-  const rays2 = rays.clone(); rays2.material = rays.material.clone(); rays2.material.opacity = .18; rays2.position.z = -1.3; sScene.add(rays2);
-  // orbiting sparkles around the halo
-  const sparkGeo = new THREE.BufferGeometry();
-  const SPARKS = 90, sparkPos = new Float32Array(SPARKS * 3), sparkSeed = new Float32Array(SPARKS);
-  for (let i = 0; i < SPARKS; i++) sparkSeed[i] = Math.random() * 6.28;
-  sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
-  const sparks = new THREE.Points(sparkGeo, new THREE.PointsMaterial({ size: 0.09, map: circleTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xfff1c0 }));
-  sScene.add(sparks);
-  const sDust = goldDust(isMobile ? 350 : 700, { x: 14, y: 8, z: 6 }); sScene.add(sDust);
-  const sPetals = petalCloud(isMobile ? 26 : 48, { x: 12, y: 9, z: 5 });
+  let rays, rays2, sparks, SPARKS = 0, sparkSeed = null;
+  if (lowEnd) {
+    rays = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ visible: false }));
+    rays2 = rays.clone();
+    sparks = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ visible: false }));
+  } else {
+    rays = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: raysTexture(), transparent: true, opacity: .32, depthWrite: false, blending: THREE.AdditiveBlending }));
+    rays.position.set(0, LOOK_Y, -1.2); sScene.add(rays);
+    rays2 = rays.clone(); rays2.material = rays.material.clone(); rays2.material.opacity = .18; rays2.position.z = -1.3; sScene.add(rays2);
+    const sparkGeo = new THREE.BufferGeometry();
+    SPARKS = 90; const sparkPos = new Float32Array(SPARKS * 3); sparkSeed = new Float32Array(SPARKS);
+    for (let i = 0; i < SPARKS; i++) sparkSeed[i] = Math.random() * 6.28;
+    sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPos, 3));
+    sparks = new THREE.Points(sparkGeo, new THREE.PointsMaterial({ size: 0.09, map: circleTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xfff1c0 }));
+    sScene.add(sparks);
+  }
+  const sDust = goldDust(lowEnd ? 80 : (isMobile ? 350 : 700), { x: 14, y: 8, z: 6 }); sScene.add(sDust);
+  const sPetals = petalCloud(lowEnd ? 8 : (isMobile ? 26 : 48), { x: 12, y: 9, z: 5 });
   sScene.add(sPetals);
 
   let ganesha = null, ganeshaPivot = new THREE.Group();
@@ -295,45 +312,73 @@
       obj.position.sub(centre);
       inner.add(obj);
       inner.userData.size = size;
-      const maxAniso = sRenderer.capabilities.getMaxAnisotropy();
       obj.traverse(n => {
         if (!n.isMesh) return;
         n.castShadow = false;
-        const m = n.material; if (!m) return;
-        if ('envMapIntensity' in m) m.envMapIntensity = 1.2;
-        ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => {
-          const tex = m[k]; if (!tex) return;
-          tex.anisotropy = maxAniso;
-          tex.minFilter = THREE.LinearMipmapLinearFilter;
-          tex.magFilter = THREE.LinearFilter;
-          tex.generateMipmaps = true;
-          tex.needsUpdate = true;
+        n.frustumCulled = true;
+        const mats = Array.isArray(n.material) ? n.material : [n.material];
+        mats.forEach(m => {
+          if (!m) return;
+          if (lowEnd) {
+            // Drop heavy PBR maps — big win on weak GPUs / slow decode
+            ['normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => {
+              if (m[k]) { m[k].dispose && m[k].dispose(); m[k] = null; }
+            });
+            if (m.map) {
+              m.map.anisotropy = 1;
+              m.map.generateMipmaps = false;
+              m.map.minFilter = THREE.LinearFilter;
+              m.map.magFilter = THREE.LinearFilter;
+              m.map.needsUpdate = true;
+            }
+            m.flatShading = true;
+            if ('envMapIntensity' in m) m.envMapIntensity = 0;
+            if ('metalness' in m) m.metalness = 0;
+            if ('roughness' in m) m.roughness = 1;
+          } else {
+            const maxAniso = sRenderer.capabilities.getMaxAnisotropy();
+            if ('envMapIntensity' in m) m.envMapIntensity = 1.2;
+            ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => {
+              const tex = m[k]; if (!tex) return;
+              tex.anisotropy = maxAniso;
+              tex.minFilter = THREE.LinearMipmapLinearFilter;
+              tex.magFilter = THREE.LinearFilter;
+              tex.generateMipmaps = true;
+              tex.needsUpdate = true;
+            });
+          }
+          m.needsUpdate = true;
         });
-        m.needsUpdate = true;
       });
       ganesha = inner;
       ganeshaPivot.add(inner);
       const s = fitScale();
       inner.scale.setScalar(s);
-      halo.visible = halo2.visible = rays.visible = rays2.visible = sparks.visible = true;
+      halo.visible = halo2.visible = true;
+      if (!lowEnd) { rays.visible = rays2.visible = sparks.visible = true; }
       fitHalo();
-      // short fade — model bytes were already downloading from <head>
-      obj.traverse(n => { if (n.isMesh && n.material) { n.material.transparent = true; n.material.opacity = 0; } });
-      const fade = { v: 0 };
-      gsap.to(fade, { v: 1, duration: 0.45, ease: 'power2.out', onUpdate: () => {
-        obj.traverse(n => { if (n.isMesh && n.material) n.material.opacity = fade.v; });
-      }, onComplete: () => { obj.traverse(n => { if (n.isMesh && n.material) n.material.transparent = false; }); } });
+      if (lowEnd) {
+        // Show immediately — no opacity fade traversal
+      } else {
+        obj.traverse(n => { if (n.isMesh && n.material) { n.material.transparent = true; n.material.opacity = 0; } });
+        const fade = { v: 0 };
+        gsap.to(fade, { v: 1, duration: 0.45, ease: 'power2.out', onUpdate: () => {
+          obj.traverse(n => { if (n.isMesh && n.material) n.material.opacity = fade.v; });
+        }, onComplete: () => { obj.traverse(n => { if (n.isMesh && n.material) n.material.transparent = false; }); } });
+      }
     };
     const fail = () => showEmbed();
-    // Prefer ArrayBuffer started in <head>; fall back to normal URL load
+    // Prefer ArrayBuffer started in <head> (already picked mobile vs full)
+    const modelUrl = window.__ganeshaUrl ||
+      ((lowEnd && W.ganeshaModelMobile) ? W.ganeshaModelMobile : W.ganeshaModel);
     const bufP = window.__ganeshaBuf;
     if (bufP) {
       bufP.then(buf => {
         try { loader.parse(buf, '', mount, fail); }
         catch (e) { fail(); }
-      }).catch(fail);
+      }).catch(() => loader.load(modelUrl, mount, undefined, fail));
     } else {
-      loader.load(W.ganeshaModel, mount, undefined, fail);
+      loader.load(modelUrl, mount, undefined, fail);
     }
   }
   function fitScale() {
@@ -421,15 +466,16 @@
     if (splashActive) {
       animateDust(sDust, dt, t); animatePetals(sPetals, dt, t);
       halo.rotation.z += dt * 0.15; halo2.rotation.z -= dt * 0.1;
-      rays.rotation.z += dt * 0.05; rays2.rotation.z -= dt * 0.035;
-      rays.material.opacity = 0.26 + Math.sin(t * 0.9) * 0.08;
-      const hp = 1 + Math.sin(t * 1.5) * 0.02; halo.scale.multiplyScalar(1); halo2.scale.multiplyScalar(1);
-      { const R = sparks.userData.r || 1.5, p = sparks.geometry.attributes.position;
+      if (!lowEnd) {
+        rays.rotation.z += dt * 0.05; rays2.rotation.z -= dt * 0.035;
+        rays.material.opacity = 0.26 + Math.sin(t * 0.9) * 0.08;
+        const R = sparks.userData.r || 1.5, p = sparks.geometry.attributes.position;
         for (let i = 0; i < SPARKS; i++) {
           const a = sparkSeed[i] + t * (0.25 + (i % 3) * 0.08), rr = R * (1.08 + Math.sin(t * 0.8 + sparkSeed[i] * 3) * 0.06);
           p.setXYZ(i, Math.cos(a) * rr, LOOK_Y + Math.sin(a) * rr, -0.7 + Math.sin(t + i) * 0.15);
         }
-        p.needsUpdate = true; sparks.material.opacity = 0.75 + Math.sin(t * 3) * 0.2; }
+        p.needsUpdate = true; sparks.material.opacity = 0.75 + Math.sin(t * 3) * 0.2;
+      }
       halo.material.opacity = 0.45 + Math.sin(t * 1.5) * 0.12;
       if (ganesha) {
         ganeshaPivot.rotation.y += (target.x * 0.45 - ganeshaPivot.rotation.y) * 0.05;

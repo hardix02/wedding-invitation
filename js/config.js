@@ -120,5 +120,6 @@ window.WEDDING = {
     ]
   },
 
-  ganeshaModel: "assets/ganesha.glb"
+  ganeshaModel: "assets/ganesha.glb",
+  ganeshaModelMobile: "assets/ganesha-mobile.glb"  // ~280KB for phones / slow nets
 };
