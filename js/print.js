@@ -35,8 +35,6 @@
   const groomFirst = SIDE !== 'bride';
   fill('groom-parents', W.groomParents || '');
   fill('bride-parents', W.brideParents || '');
-  fill('groom-from', W.groomFrom ? `(${W.groomFrom})` : '');
-  fill('bride-from', W.brideFrom ? `(${W.brideFrom})` : '');
   document.querySelectorAll('[data-name="groom"]').forEach(e => { e.textContent = W.groom; });
   document.querySelectorAll('[data-name="bride"]').forEach(e => { e.textContent = W.bride; });
 
@@ -68,8 +66,7 @@
     d.innerHTML =
       `<div class="ev-num">${i + 1}</div>` +
       `<div class="ev-name">${ev.name}</div>` +
-      `<div class="ev-when"><b>${ev.date}</b> · ${ev.time}</div>` +
-      (ev.note ? `<div class="ev-note">${ev.note}</div>` : '');
+      `<div class="ev-when"><b>${ev.date}</b> · ${ev.time}</div>`;
     tl.appendChild(d);
   });
 

@@ -485,10 +485,10 @@
     const [first, mid, second] = names.children;
     names.insertBefore(second, first);            // -> second(bride) , first(groom) , mid
     names.insertBefore(mid, first);               // -> second(bride) , mid , first(groom)
-    const gp = document.getElementById('groom-parents'), gf = document.getElementById('groom-from');
-    const bp = document.getElementById('bride-parents'), bf = document.getElementById('bride-from');
-    names.parentNode.insertBefore(bp, names); names.parentNode.insertBefore(bf, names);
-    names.parentNode.insertBefore(gp, names.nextSibling); names.parentNode.insertBefore(gf, gp.nextSibling);
+    const gp = document.getElementById('groom-parents');
+    const bp = document.getElementById('bride-parents');
+    names.parentNode.insertBefore(bp, names);
+    names.parentNode.insertBefore(gp, names.nextSibling);
   }
   document.querySelectorAll('[data-name="groom"]').forEach(e => e.textContent = W.groom);
   document.querySelectorAll('[data-name="bride"]').forEach(e => e.textContent = W.bride);
@@ -511,8 +511,6 @@
   document.getElementById('groom-parents').textContent = W.groomParents || '';
   document.getElementById('bride-parents').textContent = W.brideParents || '';
   document.getElementById('tithi-line').textContent = W.tithi || '';
-  document.getElementById('groom-from').textContent = W.groomFrom ? `(${W.groomFrom})` : '';
-  document.getElementById('bride-from').textContent = W.brideFrom ? `(${W.brideFrom})` : '';
   document.getElementById('muhurat-line').textContent = W.muhurat || '';
   document.getElementById('foot-family').textContent = SIDE === 'bride' ? `${W.brideFamily}` : `${W.groomFamily}`;
   document.getElementById('date-line').textContent = W.dateText;
@@ -553,7 +551,7 @@
   W.events.forEach(ev => {
     const d = document.createElement('div'); d.className = 'ev reveal';
     d.innerHTML = `<div class="ev-card"><div class="ev-icon">${ICONS[ev.icon] || ev.icon}</div><div class="ev-name">${ev.name}</div>
-      <div class="ev-when">${ev.date} · ${ev.time}</div><div class="ev-note">${ev.note}</div></div>`;
+      <div class="ev-when">${ev.date} · ${ev.time}</div></div>`;
     tlEl.appendChild(d);
   });
 
