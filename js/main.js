@@ -285,7 +285,7 @@
       d.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/draco/');
       loader.setDRACOLoader(d);
     }
-    loader.load(W.ganeshaModel, gltf => {
+    const mount = (gltf) => {
       const obj = gltf.scene;
       obj.rotation.y = -Math.PI / 2; // face the viewer
       obj.updateMatrixWorld(true);
@@ -302,12 +302,12 @@
         const m = n.material; if (!m) return;
         if ('envMapIntensity' in m) m.envMapIntensity = 1.2;
         ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap'].forEach(k => {
-          const t = m[k]; if (!t) return;
-          t.anisotropy = maxAniso;
-          t.minFilter = THREE.LinearMipmapLinearFilter;
-          t.magFilter = THREE.LinearFilter;
-          t.generateMipmaps = true;
-          t.needsUpdate = true;
+          const tex = m[k]; if (!tex) return;
+          tex.anisotropy = maxAniso;
+          tex.minFilter = THREE.LinearMipmapLinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.generateMipmaps = true;
+          tex.needsUpdate = true;
         });
         m.needsUpdate = true;
       });
@@ -315,13 +315,26 @@
       ganeshaPivot.add(inner);
       const s = fitScale();
       inner.scale.setScalar(s);
-      // soft fade-in instead of a bounce
+      halo.visible = halo2.visible = rays.visible = rays2.visible = sparks.visible = true;
+      fitHalo();
+      // short fade — model bytes were already downloading from <head>
       obj.traverse(n => { if (n.isMesh && n.material) { n.material.transparent = true; n.material.opacity = 0; } });
       const fade = { v: 0 };
-      gsap.to(fade, { v: 1, duration: 1.2, ease: 'power2.out', onUpdate: () => {
+      gsap.to(fade, { v: 1, duration: 0.45, ease: 'power2.out', onUpdate: () => {
         obj.traverse(n => { if (n.isMesh && n.material) n.material.opacity = fade.v; });
       }, onComplete: () => { obj.traverse(n => { if (n.isMesh && n.material) n.material.transparent = false; }); } });
-    }, undefined, () => showEmbed());
+    };
+    const fail = () => showEmbed();
+    // Prefer ArrayBuffer started in <head>; fall back to normal URL load
+    const bufP = window.__ganeshaBuf;
+    if (bufP) {
+      bufP.then(buf => {
+        try { loader.parse(buf, '', mount, fail); }
+        catch (e) { fail(); }
+      }).catch(fail);
+    } else {
+      loader.load(W.ganeshaModel, mount, undefined, fail);
+    }
   }
   function fitScale() {
     if (!ganesha) return 1;
