@@ -72,7 +72,7 @@
 
   const wellPage = document.getElementById('wellwishers-page');
   const names = W.darshanabhilashi || [];
-  if (SIDE !== 'groom' || !names.length) {
+  if (!names.length) {
     if (wellPage) wellPage.remove();
   } else {
     const split = (list, leftId, rightId) => {
@@ -82,6 +82,9 @@
     };
     split(names, 'darshan-left', 'darshan-right');
     split([...(W.snehadhin || []), ...(W.snehadhinYoung || [])], 'sneha-left', 'sneha-right');
+    split(W.mosal || [], 'mosal-left', 'mosal-right');
+    split(W.faiFuva || [], 'faifuva-left', 'faifuva-right');
+    wellPage.querySelectorAll('.well-grp').forEach(g => { if (!g.querySelector('li')) g.remove(); });
   }
 
   fill('foot-names', groomFirst ? `${W.groom} \u2014 ${W.bride}` : `${W.bride} \u2014 ${W.groom}`);

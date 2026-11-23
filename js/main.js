@@ -588,13 +588,16 @@
     fillNames(rightId, names.slice(mid));
   };
   const wellwishersEl = document.querySelector('.wellwishers');
-  // Groom-side only — never show Baraiya well-wisher lists on bride invites
-  if (SIDE !== 'groom' || !(W.darshanabhilashi || []).length) {
+  // Each side shows its own lists (bride_side overrides the groom-side Baraiya lists)
+  if (!(W.darshanabhilashi || []).length) {
     if (wellwishersEl) wellwishersEl.remove();
   } else {
     fillTwoCols('darshanabhilashi-left', 'darshanabhilashi-right', W.darshanabhilashi);
     fillTwoCols('snehadhin-left', 'snehadhin-right',
       [...(W.snehadhin || []), ...(W.snehadhinYoung || [])]);
+    fillTwoCols('mosal-left', 'mosal-right', W.mosal);
+    fillTwoCols('faifuva-left', 'faifuva-right', W.faiFuva);
+    wellwishersEl.querySelectorAll('.wellwishers-group').forEach(g => { if (!g.querySelector('li')) g.remove(); });
   }
   document.getElementById('venue-title').textContent = W.venueTitle || 'લગ્ન સ્થળ';
   document.getElementById('venue-name').textContent = W.venue.name;
