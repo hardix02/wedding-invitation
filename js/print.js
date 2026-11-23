@@ -84,6 +84,8 @@
     split([...(W.snehadhin || []), ...(W.snehadhinYoung || [])], 'sneha-left', 'sneha-right');
     split(W.mosal || [], 'mosal-left', 'mosal-right');
     split(W.faiFuva || [], 'faifuva-left', 'faifuva-right');
+    document.getElementById('sneha-top').innerHTML = (W.snehadhinTop || []).map(n => `<li>${n}</li>`).join('');
+    if (SIDE === 'bride') wellPage.querySelector('.rule').after(document.getElementById('sneha-grp'));
     wellPage.querySelectorAll('.well-grp').forEach(g => { if (!g.querySelector('li')) g.remove(); });
   }
 
